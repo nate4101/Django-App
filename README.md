@@ -6,6 +6,7 @@ This is a demo project that combines a Django web application with infrastructur
 
 ## 📦 Tech Stack
 
+- **Frontend** Html Templates with Tailwind.css CDN embedded
 - **Backend**: Django (Python)
 - **Database**: Postgresql
 - **Infrastructure**: Terraform
@@ -34,6 +35,8 @@ python -m venv .venv
 .\.venv\Scripts\activate
 
 python manage.py migrate
+
+create .env file, copy .env.example to .env
 
 python manage.py runserver
 
