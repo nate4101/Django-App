@@ -10,7 +10,7 @@ This is a demo project that combines a Django web application with infrastructur
 - **Database**: Postgresql
 - **Infrastructure**: Terraform
 - **Cloud**: Google Cloud Platform (GCP)
-- **Tools**: VSCode, Git, Black (formatter), Pylint (linter)
+- **Tools**: VSCode, Git, Github Actions
 
 ---
 

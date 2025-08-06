@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Duck Details - {{ duck.name }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-yellow-50 min-h-screen p-6">
+    <div class="max-w-xl mx-auto">
+      <a
+        href="{% url 'ducks:index' %}"
+        class="text-blue-600 underline mb-4 block"
+        >← Back to duck list</a
+      >
+
+      <div class="bg-white p-6 rounded-xl shadow space-y-6">
+        <!-- Duck name and description -->
+        <div>
+          <h1 class="text-2xl font-bold text-gray-800">{{ duck.name }}</h1>
+          <p class="mt-2 text-gray-600">{{ duck.description }}</p>
+        </div>
+
+        {% if duck.duckfact_set.all %}
+        <div class="mt-6">
+          <h2 class="text-xl font-semibold mb-2">Fun Facts</h2>
+          <div class="divide-y divide-gray-200">
+            {% for fact in duck.duckfact_set.all %}
+            <div class="flex items-start justify-between py-4">
+              <div class="flex-1">
+                <p class="text-gray-800">{{ fact.fact }}</p>
+                <span class="text-sm text-gray-500"
+                  >Rating: {{ fact.rating }}</span
+                >
+              </div>
+              <div class="flex items-center gap-2 ml-4">
+                <form
+                  action="{% url 'ducks:rate' duck.id %}"
+                  method="post"
+                  class="inline"
+                >
+                  {% csrf_token %}
+                  <input type="hidden" name="fact_id" value="{{ fact.id }}" />
+                  <input type="hidden" name="direction" value="up" />
+                  <button
+                    type="submit"
+                    title="Vote up"
+                    class="hover:text-green-600 text-lg px-1"
+                  >
+                    👍
+                  </button>
+                </form>
+                <form
+                  action="{% url 'ducks:rate' duck.id %}"
+                  method="post"
+                  class="inline"
+                >
+                  {% csrf_token %}
+                  <input type="hidden" name="fact_id" value="{{ fact.id }}" />
+                  <input type="hidden" name="direction" value="down" />
+                  <button
+                    type="submit"
+                    title="Vote down"
+                    class="hover:text-red-600 text-lg px-1"
+                  >
+                    👎
+                  </button>
+                </form>
+                <form
+                  method="post"
+                  action="{% url 'ducks:delete_fact_by_id' fact.id %}"
+                  onsubmit="return confirm('Are you sure you want to delete this fact?')"
+                >
+                  {% csrf_token %}
+                  <button type="submit" class="text-red-500 hover:text-red-700">
+                    🗑
+                  </button>
+                </form>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% else %}
+        <p class="mt-6 text-sm text-gray-500">
+          No facts available for this duck.
+        </p>
+        {% endif %}
+        <a
+          href="{% url 'ducks:add_fact' duck.id %}"
+          class="text-blue-500 hover:underline text-sm"
+        >
+          ➕ Add a new fact
+        </a>
+      </div>
+    </div>
+
+    {% if messages %} {% for message in messages %}
+    <div
+      id="toast"
+      role="alert"
+      class="fixed top-4 right-4 px-4 py-2 rounded shadow flex items-center space-x-4 opacity-0 transition-opacity duration-300 {% if 'error' in message.tags %} bg-red-600 text-white {% elif 'success' in message.tags %} bg-green-600 text-white {% else %} bg-gray-600 text-white {% endif %}"
+    >
+      <div>{{ message }}</div>
+      <button
+        id="toast-close"
+        class="text-white hover:text-gray-200 focus:outline-none"
+        aria-label="Close notification"
+        type="button"
+      >
+        ×
+      </button>
+    </div>
+
+    <script>
+      const toast = document.getElementById("toast");
+      const closeBtn = document.getElementById("toast-close");
+
+      // Show toast on page load
+      toast.classList.remove("opacity-0");
+
+      // Auto-hide toast after 3 seconds
+      const hideTimeout = setTimeout(() => {
+        toast.classList.add("opacity-0");
+      }, 3000);
+
+      // Close button hides toast immediately
+      closeBtn.addEventListener("click", () => {
+        clearTimeout(hideTimeout);
+        toast.classList.add("opacity-0");
+      });
+    </script>
+    {% endfor %} {% endif %}
+  </body>
+</html>
